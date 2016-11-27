@@ -122,7 +122,7 @@ deleted = deleted + 1
  kick_user(v.peer_id,msg.to.id)
  end
  end
- send_large_msg(receiver, deleted.." Deleted account removed from group!") 
+ send_large_msg(receiver, deleted.." دلیت اکانتی از گروه ریمو شدند!") 
  end 
 
 local function addword(msg, name)
@@ -174,7 +174,7 @@ function clear_commandsbad(msg, cmd_name)
   --Save on redis  
   local hash = get_variables_hash(msg)
   redis:hdel(hash, cmd_name)
-  return ''..cmd_name..'  cleaned!'
+  return ''..cmd_name..'  پاک شد!'
 end
 
 local function history(extra, suc, result)
@@ -182,9 +182,9 @@ local function history(extra, suc, result)
     delete_msg(result[i].id, ok_cb, false)
   end
   if tonumber(extra.con) == #result then
-    send_msg(extra.chatid, '"'..#result..'" message has been removed!', ok_cb, false)
+    send_msg(extra.chatid, '"'..#result..'" پیام در سوپرگروه حذف شد!', ok_cb, false)
   else
-    send_msg(extra.chatid, 'Removing has been finished.', ok_cb, false)
+    send_msg(extra.chatid, 'پیام های سوپرگروه حدف شد.', ok_cb, false)
   end
 end
 
@@ -208,7 +208,7 @@ function run(msg, matches)
       if msg.reply_id and matches[1] == "ذخیره" and matches[2] then
         name = matches[2]
         load_document(msg.reply_id, saveplug, {msg=msg,name=name})
-        reply_msg(msg['id'], 'Plugin '..name..' has been saved.', ok_cb, false)
+        reply_msg(msg['id'], 'پلاگین '..name..' با موفقیت ذخیره شد.', ok_cb, false)
       end
  end
          --tosticker && tophoto:
@@ -229,24 +229,24 @@ function run(msg, matches)
 			   if not is_owner(msg) and not is_sudo(msg) then
 				   redis:setex("wait:"..msg.from.id, 30, true)
 				   redis:set("sticker:photo", "waiting")
-    	     return 'Please send your sticker now\n\nPowered by '..team..'\nJoin us : '..channel
+    	     return 'لطفا استیکر را ارسال کنید\n\nکانال ما : '..team
 				 end
     	redis:set("sticker:photo", "waiting")
-    	return 'Please send your sticker now\n\nPowered by '..team..'\nJoin us : '..channel
+    	     return 'لطفا استیکر را ارسال کنید\n\nکانال ما : '..team
 			elseif redis:get("wait:"..msg.from.id) then
-			return "Please wait for 30 second."
+			return "لطفا هر 30 ثانیه یکبار مجاز است."
 			end
     elseif matches[1] == "به استیکر" then
 		  if not redis:get("wait:"..msg.from.id) then
 			   if not is_owner(msg) and not is_sudo(msg) then
 				   redis:setex("wait:"..msg.from.id, 30, true)
 				   redis:set("photo:sticker", "waiting")
-           return 'Please send your photo now\n\nPowered by '..team..'\nJoin us : '..channel
+           return 'لطفا عکس را ارسال کنید\n\nکانال ما'..team
 				 end
       redis:set("photo:sticker", "waiting")
-      return 'Please send your photo now\n\nPowered by '..team..'\nJoin us : '..channel
+        return 'لطفا عکس را ارسال کنید\n\nکانال ما'..team
 		  elseif redis:get("wait:"..msg.from.id) then
-			return "Please wait for 30 second."
+			return "لطفا هر 30 ثانیه یکبار مجاز است."
 			end
     end
        --tosticker && tophoto.
@@ -289,12 +289,12 @@ function run(msg, matches)
                 receiver = get_receiver(msg) 
                 channel_get_users(receiver, check_member_super_deleted,{receiver = receiver, msg = msg})
 		      else
-			      return "Just for owner or sudo!"
+			      return "فقط مدیر گروه!"
           end
 		    end
 		    if matches[2] == "لیست فیلتر" then
 		      if not is_momod(msg) then
-            return 'only for moderators!'
+            return 'فقط مدیر گروه!'
           end
           asd = '1'
           return clear_commandbad(msg, asd)
@@ -304,7 +304,7 @@ function run(msg, matches)
 	   --Filter:
 	if matches[1] == 'فیلتر' then
     if not is_momod(msg) then
-      return 'only for moderators!'
+      return 'فقط مدیر گروه!'
     end
     name = string.sub(matches[2], 1, 50)
     return addword(msg, name)
@@ -314,7 +314,7 @@ function run(msg, matches)
   end
   if matches[1] == 'حذف فیلتر' then
     if not is_momod(msg) then
-      return 'only for moderators!'
+      return 'فقط مدیر گروه!'
     end
     return clear_commandsbad(msg, matches[2])
     end
@@ -376,14 +376,14 @@ function run(msg, matches)
 	    if matches[1] == 'حذف' and is_owner(msg) then
             if msg.to.type == 'channel' then
                 if tonumber(matches[2]) > 10000 or tonumber(matches[2]) < 1 then
-                    return "More than 1 and less than 10,000"
+                    return "پیام سوپرگروه با موفقیت حذف شدند"
                 end
                 get_history(msg.to.peer_id, matches[2] + 1 , history , {chatid = msg.to.peer_id, con = matches[2]})
             else
                 return "Only for supergroup!"
             end
         elseif matches[1] == 'حذف' and not is_owner(msg) then
-            return "For moderators only!"
+            return "فقط مدیر گروه!"
         end
 	   --Rmsg.
        --onservice:
