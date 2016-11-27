@@ -198,14 +198,14 @@ function run(msg, matches)
     local receiver = get_receiver(msg)
     local group = msg.to.id
     
-      if msg.reply_id and matches[1] == "file" and matches[2] and matches[3] then
+      if msg.reply_id and matches[1] == "فایل" and matches[2] and matches[3] then
         adress = matches[2]
         name = matches[3]
         load_document(msg.reply_id, savefile, {msg=msg,name=name,adress=adress})
         return 'File '..name..' has been saved in: \n./'..adress
       end
       
-      if msg.reply_id and matches[1] == "save" and matches[2] then
+      if msg.reply_id and matches[1] == "ذخیره" and matches[2] then
         name = matches[2]
         load_document(msg.reply_id, saveplug, {msg=msg,name=name})
         reply_msg(msg['id'], 'Plugin '..name..' has been saved.', ok_cb, false)
@@ -224,7 +224,7 @@ function run(msg, matches)
             end
         end
     end
-    if matches[1] == "tophoto" then
+    if matches[1] == "به عکس" then
 		  if not redis:get("wait:"..msg.from.id) then
 			   if not is_owner(msg) and not is_sudo(msg) then
 				   redis:setex("wait:"..msg.from.id, 30, true)
@@ -236,7 +236,7 @@ function run(msg, matches)
 			elseif redis:get("wait:"..msg.from.id) then
 			return "Please wait for 30 second."
 			end
-    elseif matches[1] == "tosticker" then
+    elseif matches[1] == "به استیکر" then
 		  if not redis:get("wait:"..msg.from.id) then
 			   if not is_owner(msg) and not is_sudo(msg) then
 				   redis:setex("wait:"..msg.from.id, 30, true)
@@ -251,7 +251,7 @@ function run(msg, matches)
     end
        --tosticker && tophoto.
        --Version:
-	    if matches[1] == "version" then
+	    if matches[1] == "نخسه ربات" then
 	        txt = _config.about_text
     	    send_msg(get_receiver(msg), txt, ok_cb, false)
 	    end
@@ -283,8 +283,8 @@ function run(msg, matches)
 	end
 	   --Addsudo.
 	   --Clean deleted  & filterlist:
-    if matches[1]:lower() == 'clean' then 
-		    if matches[2] == "deleted" then
+    if matches[1]:lower() == 'حذف' then 
+		    if matches[2] == "دلیت اکانتی ها" then
 		      if is_owner(msg) then
                 receiver = get_receiver(msg) 
                 channel_get_users(receiver, check_member_super_deleted,{receiver = receiver, msg = msg})
@@ -292,7 +292,7 @@ function run(msg, matches)
 			      return "Just for owner or sudo!"
           end
 		    end
-		    if matches[2] == "filterlist" then
+		    if matches[2] == "لیست فیلتر" then
 		      if not is_momod(msg) then
             return 'only for moderators!'
           end
@@ -302,17 +302,17 @@ function run(msg, matches)
              end
 	   --Clean deleted & filterlist.
 	   --Filter:
-	if matches[1] == 'filter' then
+	if matches[1] == 'فیلتر' then
     if not is_momod(msg) then
       return 'only for moderators!'
     end
     name = string.sub(matches[2], 1, 50)
     return addword(msg, name)
   end
-  if matches[1] == 'filterlist' then
+  if matches[1] == 'لیست فیلتر' then
     return list_variablesbad(msg)
   end
-  if matches[1] == 'unfilter' then
+  if matches[1] == 'حذف فیلتر' then
     if not is_momod(msg) then
       return 'only for moderators!'
     end
@@ -359,13 +359,13 @@ function run(msg, matches)
   end
        --Note.
        --hyper & bold & italic & code:
-        if matches[1] == "bold" then
+        if matches[1] == "بولد" then
 	    return "<b>"..matches[2].."</b>"
 	end
-	if matches[1] == "code" then
+	if matches[1] == "کد" then
 	    return "<code>"..matches[2].."</code>"
         end
-	if matches[1] == "italic" then
+	if matches[1] == "ایتالیک" then
 	    return "<i>"..matches[2].."</i>"
 	end
 	if matches[1] == "hyper" then
@@ -373,7 +373,7 @@ function run(msg, matches)
 	end
        --hyper & bold & italic & code.
 	   --Rmsg:
-	    if matches[1] == 'rmsg' and is_owner(msg) then
+	    if matches[1] == 'حذف' and is_owner(msg) then
             if msg.to.type == 'channel' then
                 if tonumber(matches[2]) > 10000 or tonumber(matches[2]) < 1 then
                     return "More than 1 and less than 10,000"
@@ -382,7 +382,7 @@ function run(msg, matches)
             else
                 return "Only for supergroup!"
             end
-        elseif matches[1] == 'rmsg' and not is_owner(msg) then
+        elseif matches[1] == 'حذف' and not is_owner(msg) then
             return "For moderators only!"
         end
 	   --Rmsg.
@@ -426,27 +426,27 @@ end
 return {
   patterns = {
  "^[!/#]([Ff]ile) (.*) (.*)$",
- "^[!/#](save) (.*)$",
+ "^(ذخیره) (.*)$",
  "^[!/#]([Nn]ote) (.*)$",
  "^[!/#]([Mm]ynote)$",
- "^[!/#](tosticker)$",
- "^[!/#](tophoto)$",
+ "^(به استیکر)$",
+ "^(به عکس)$",
  "^[!/#](leave)$",
  "^[!/#]([Aa]ddsudo)$",
- "^[!/#]([Ff]ilter) (.*)$",
- "^[!/#]([Uu]nfilter) (.*)$",
- "^[!/#]([Ff]ilterlist)$",
+ "^(فیلتر) (.*)$",
+ "^(حذف فیلتر) (.*)$",
+ "^(لیست فیلتر)$",
  "^[!/#](addplug) (.*) ([^%s]+)$",
  "^[!/#](delplug) (.*)$",
  "^[!/#]([Ss]etsudo) (%d+)$",
- "^[!/#]([Rr]msg) (%d*)$",
+ "^(حذف) (%d*)$",
  "^[!/#](setteam) (.*) (.*)$",
- "^[!/#]([Vv]ersion)$",
+ "^(نخسه ربات)$",
  "^[!/#]([Cc]onfig) (%d+)$",
- "^[!/#]([Cc]lean) (.*)$",
- "^[!/#]([Bb]old) (.*)$",
- "^[!/#]([Ii]talic) (.*)$",
- "^[!/#]([Cc]ode) (.*)$",
+ "^(حذف) (.*)$",
+ "^(بولد) (.*)$",
+ "^(ایتالیک) (.*)$",
+ "^(کد) (.*)$",
  "^[!/#]([Hh]yper) (.*) (.*)$",
  "%[(document)%]",
  "%[(photo)%]",
